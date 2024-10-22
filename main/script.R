@@ -44,8 +44,8 @@ glimpse(data)
 # drop rows where data is NaN
 
 data[data == "NaN"] = NA
-data = data %>% filter(!is.na(Festival) & !is.na(Weather_conditions) & !is.na(City) & !is.na(multiple_deliveries))
-
+data = data %>% filter(!is.na(Festival) & !is.na(Weather_conditions) & !is.na(City) & !is.na(multiple_deliveries) & !is.na(Delivery_person_Age) & !is.na(Delivery_person_Ratings) & !is.na(Road_traffic_density) )
+data = data %>% filter(!is.na(Month) & !is.na(Vehicle_condition) & !is.na(Type_of_vehicle) & !is.na(Type_of_order) & !is.na(Time_taken..min.) & !is.na(Time))
 unique(data $ Festival)
 unique(data $ Weather_conditions)
 unique(data $ City)
@@ -75,5 +75,20 @@ data = data %>%
 
 data = data %>% select(-Time_Orderd)
 data = data %>% select(-Time_Order_picked)
+
+glimpse(data)
+
+#Removing outliears using dplyr package
+remove_outliers = function(x) {
+  lower_bound = quantile(x, 0.25) - 1.5 * IQR(x)
+  upper_bound = quantile(x, 0.75) + 1.5 * IQR(x)
+  x[x < lower_bound | x > upper_bound] = NA  # Replace outliers with NA
+  return(x)
+}
+
+data_no_outliers = data
+data_no_outliers[sapply(data_no_outliers, is.numeric)] = lapply(data_no_outliers[sapply(data_no_outliers, is.numeric)], remove_outliers)
+
+View(data)
 
 glimpse(data)
