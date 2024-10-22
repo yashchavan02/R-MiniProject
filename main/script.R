@@ -4,8 +4,10 @@
 
 install.packages("dplyr")
 install.packages("tidyr")
-library(dplyr)
+
 library(tidyr)
+library(dplyr)
+library(dplyr)
 
 # <- load & read data ->
 
@@ -45,7 +47,7 @@ glimpse(data)
 
 data[data == "NaN"] = NA
 data = data %>% filter(!is.na(Festival) & !is.na(Weather_conditions) & !is.na(City) & !is.na(multiple_deliveries) & !is.na(Delivery_person_Age) & !is.na(Delivery_person_Ratings) & !is.na(Road_traffic_density) )
-data = data %>% filter(!is.na(Month) & !is.na(Vehicle_condition) & !is.na(Type_of_vehicle) & !is.na(Type_of_order) & !is.na(Time_taken..min.) & !is.na(Time))
+data = data %>% filter(!is.na(Vehicle_condition) & !is.na(Type_of_vehicle) & !is.na(Type_of_order) & !is.na(Time_taken..min.))
 unique(data $ Festival)
 unique(data $ Weather_conditions)
 unique(data $ City)
@@ -56,6 +58,7 @@ glimpse(data)
 # separate the Order date column
 
 data = separate(data,col=Order_Date,int=c("Day","Month","Year"),sep="-")
+data = data %>% filter(!is.na(Month))
 
 # drop unnecessary columns
 
@@ -71,6 +74,8 @@ data = data %>%
          Time_Order_picked = as.POSIXct(Time_Order_picked, format = "%H:%M"),
          Time = as.numeric(difftime(Time_Order_picked, Time_Orderd, units = "mins")))
 
+data = data %>% filter(!is.na(Time))
+
 # drop unnecessary columns
 
 data = data %>% select(-Time_Orderd)
@@ -78,11 +83,12 @@ data = data %>% select(-Time_Order_picked)
 
 glimpse(data)
 
-#Removing outliears using dplyr package
+# Removing outliers using dplyr package
+
 remove_outliers = function(x) {
   lower_bound = quantile(x, 0.25) - 1.5 * IQR(x)
   upper_bound = quantile(x, 0.75) + 1.5 * IQR(x)
-  x[x < lower_bound | x > upper_bound] = NA  # Replace outliers with NA
+  x[x < lower_bound | x > upper_bound] = NA  # Replace outlier with NA
   return(x)
 }
 
