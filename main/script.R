@@ -4,8 +4,10 @@
 
 install.packages("dplyr")
 install.packages("tidyr")
-library(dplyr)
+
 library(tidyr)
+library(dplyr)
+library(dplyr)
 
 # <- load & read data ->
 
@@ -41,10 +43,10 @@ data = data %>% select(-Delivery_location_longitude)
 
 names(data)
 
-
 # separate the Order date column
 
 data = separate(data,col=Order_Date,int=c("Day","Month","Year"),sep="-")
+data = data %>% filter(!is.na(Month))
 
 # drop unnecessary columns
 
@@ -59,6 +61,8 @@ data = data %>%
   mutate(Time_Orderd = as.POSIXct(Time_Orderd, format = "%H:%M"),
          Time_Order_picked = as.POSIXct(Time_Order_picked, format = "%H:%M"),
          Time = as.numeric(difftime(Time_Order_picked, Time_Orderd, units = "mins")))
+
+data = data %>% filter(!is.na(Time))
 
 # drop unnecessary columns
 
@@ -79,11 +83,12 @@ unique(data $ multiple_deliveries)
 
 names(data)
 
-#Removing outliears using dplyr package
+# Removing outliers using dplyr package
+
 remove_outliers = function(x) {
   lower_bound = quantile(x, 0.25) - 1.5 * IQR(x)
   upper_bound = quantile(x, 0.75) + 1.5 * IQR(x)
-  x[x < lower_bound | x > upper_bound] = NA  # Replace outliers with NA
+  x[x < lower_bound | x > upper_bound] = NA  # Replace outlier with NA
   return(x)
 }
 
