@@ -17,7 +17,7 @@ data = read.csv(path)
 View(data) 
 head(data)
 tail(data)
-glimpse(data)
+names(data)
 
 # <- categorical data exploration -> 
 
@@ -39,19 +39,8 @@ data = data %>% select(-Restaurant_longitude)
 data = data %>% select(-Delivery_location_latitude)
 data = data %>% select(-Delivery_location_longitude)
 
-glimpse(data)
+names(data)
 
-# drop rows where data is NaN
-
-data[data == "NaN"] = NA
-data = data %>% filter(!is.na(Festival) & !is.na(Weather_conditions) & !is.na(City) & !is.na(multiple_deliveries) & !is.na(Delivery_person_Age) & !is.na(Delivery_person_Ratings) & !is.na(Road_traffic_density) )
-data = data %>% filter(!is.na(Month) & !is.na(Vehicle_condition) & !is.na(Type_of_vehicle) & !is.na(Type_of_order) & !is.na(Time_taken..min.) & !is.na(Time))
-unique(data $ Festival)
-unique(data $ Weather_conditions)
-unique(data $ City)
-unique(data $ multiple_deliveries)
-
-glimpse(data)
 
 # separate the Order date column
 
@@ -62,7 +51,7 @@ data = separate(data,col=Order_Date,int=c("Day","Month","Year"),sep="-")
 data = data %>% select(-Day)
 data = data %>% select(-Year)
 
-glimpse(data)
+names(data)
 
 # calculate time required to accept customer order
 
@@ -76,7 +65,19 @@ data = data %>%
 data = data %>% select(-Time_Orderd)
 data = data %>% select(-Time_Order_picked)
 
-glimpse(data)
+names(data)
+
+# drop rows where data is NaN
+
+data[data == "NaN"] = NA
+data = data %>% filter(!is.na(Festival) & !is.na(Weather_conditions) & !is.na(City) & !is.na(multiple_deliveries) & !is.na(Delivery_person_Age) & !is.na(Delivery_person_Ratings) & !is.na(Road_traffic_density) )
+data = data %>% filter(!is.na(Month) & !is.na(Vehicle_condition) & !is.na(Type_of_vehicle) & !is.na(Type_of_order) & !is.na(Time_taken..min.) & !is.na(Time))
+unique(data $ Festival)
+unique(data $ Weather_conditions)
+unique(data $ City)
+unique(data $ multiple_deliveries)
+
+names(data)
 
 #Removing outliears using dplyr package
 remove_outliers = function(x) {
@@ -91,4 +92,35 @@ data_no_outliers[sapply(data_no_outliers, is.numeric)] = lapply(data_no_outliers
 
 View(data)
 
-glimpse(data)
+names(data)
+
+#plot Graph using ggplot
+install.packages("ggplot2")
+library(ggplot2)
+names(data)
+
+#Person Ratings by their Age
+ggplot(data, aes(Delivery_person_Age, Delivery_person_Ratings))+ 
+  geom_point(size=5) +
+  geom_line(color='red')
+
+ggplot(data, aes(x = City, y = Time_taken..min.)) + geom_point()
+  
+  names(data)
+
+#type of order by person count
+ggplot(data,aes(Type_of_order)) +
+  geom_histogram(stat="count")
+
+#count for multiple deliveries
+ggplot(data,aes(multiple_deliveries)) +
+  geom_histogram(stat="count")
+
+#number of orders in festival period
+ggplot(data,aes(Festival)) +
+  geom_bar(stat="count")
+
+ggplot(data, aes(Weather_conditions))+geom_bar()
+ggplot(data, aes(Road_traffic_density))+geom_bar(fill = "blue")
+
+#y = "Time_taken..min.")
