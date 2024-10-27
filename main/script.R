@@ -95,7 +95,7 @@ ggplot(data_no_outliers, aes(Road_traffic_density, Time_taken..min.)) +
 
 ggplot(data, aes(Weather_conditions))+geom_bar(fill = "green")
 
-#problem statem 3
+#problem statement 3
 # Convert the Time_taken..min. column to numeric if it isn't already
 data$Time = as.numeric(data$Time)
 
@@ -117,3 +117,65 @@ ggplot(data, aes(Delivery_person_Ratings, Time_taken..min.)) +
 ggplot(data, aes(Delivery_person_Age, Delivery_person_Ratings))+ 
   geom_point(size=5) +
   geom_line(color='red')
+
+
+ggplot(data, aes(x = Month)) +
+  geom_bar(binwidth = 5, fill = "yellow", color = "white") +
+  labs(title = "Histogram of Type_of_order", x = "Type_of_order")
+
+
+#objective 2
+festival_traffic_summary = data %>%
+  group_by(Festival, Road_traffic_density) %>%
+  summarise(avg_time_taken = mean(Time_taken..min., na.rm = TRUE),
+            avg_rating = mean(Delivery_person_Ratings, na.rm = TRUE)) %>%
+  ungroup()
+
+# View the summary
+print(festival_traffic_summary)
+
+# Filter data for festival and nonfestival times only
+festival_data = data %>%
+  filter(Festival == "Yes")
+nonfestival_data = data %>%
+  filter(Festival == "No")
+# Correlation between delivery time and rating during festivals and regular
+cor(festival_data$Time_taken..min., festival_data$Delivery_person_Ratings, use = "complete.obs")
+cor(nonfestival_data$Time_taken..min., nonfestival_data$Delivery_person_Ratings, use = "complete.obs")
+
+#Objective 3
+# necessary packages dplyr
+# Select the relevant columns
+model_data = data %>%
+  filter(!is.na(Time_taken..min.), !is.na(Delivery_person_Ratings)) %>%  
+  select(Time_taken..min., Delivery_person_Ratings, Road_traffic_density, Festival, Weather_conditions)
+
+# Convert categorical variables to factors
+model_data$Road_traffic_density = as.factor(model_data$Road_traffic_density)
+model_data$Festival = as.factor(model_data$Festival)
+model_data$Weather_conditions = as.factor(model_data$Weather_conditions)
+
+# Install and load the required package
+install.packages("caTools")
+library(caTools)
+
+# Split the data into training (70%) and testing (30%) sets
+set.seed(123)  # For reproducibility
+split = sample.split(model_data$Time_taken..min., SplitRatio = 0.7)
+train_data = subset(model_data, split == TRUE)
+test_data = subset(model_data, split == FALSE)
+
+# Fit the linear regression model
+model = lm(Time_taken..min. ~ Delivery_person_Ratings + Road_traffic_density + Festival + Weather_conditions, data = train_data)
+
+# Summary of the model to check coefficients and significance levels
+summary(model)
+
+# Predict delivery time on the test set
+predictions = predict(model, newdata = test_data)
+
+# Compare predicted and actual values
+results = data.frame(Actual = test_data$Time_taken..min., Predicted = predictions)
+
+# Print the first few rows
+head(results)
