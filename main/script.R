@@ -179,3 +179,5 @@ results = data.frame(Actual = test_data$Time_taken..min., Predicted = prediction
 
 # Print the first few rows
 head(results)
+results[sample(nrow(results), min(15, nrow(results))), ]
+
