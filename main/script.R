@@ -78,7 +78,7 @@ ggplot(data_no_outliers, aes(Road_traffic_density, Time_taken..min.)) +
   labs(title = "Time Taken by Road Traffic Density", 
        x = "Road Traffic Density", 
        y = "Time Taken (min)") +
-  
+  theme_minimal()
   
   # Box Plot
   ggplot(data_no_outliers, aes(Road_traffic_density, Time_taken..min.)) + 
@@ -86,11 +86,11 @@ ggplot(data_no_outliers, aes(Road_traffic_density, Time_taken..min.)) +
   labs(title = "Box Plot of Road Traffic Density by Time Taken (min)", 
        x = "Road Traffic Density", 
        y = "Time Taken (min)") +
-  
+  theme_minimal()
   
   #problem statement 2
   ggplot(data, aes(Weather_conditions, Time_taken..min.)) + 
-  geom_point(size=4, color='blue') + 
+  geom_point(size=1, color='blue') + 
   labs(title="Scatter Plot ", x="Weather conditions", y="Time taken in min")
 
 ggplot(data, aes(Weather_conditions))+geom_bar(fill = "green")
@@ -179,3 +179,5 @@ results = data.frame(Actual = test_data$Time_taken..min., Predicted = prediction
 
 # Print the first few rows
 head(results)
+results[sample(nrow(results), min(15, nrow(results))), ]
+
