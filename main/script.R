@@ -42,9 +42,9 @@ data = separate(data, col = Order_Date, into = c("Day", "Month", "Year"), sep = 
 data = data %>% select(-Day, -Year)
 
 # Calculate time required to accept customer order
-data = data %>%
-  mutate(Time_Orderd = as.POSIXct(Time_Orderd, format = "%H:%M"),
-         Time_Order_picked = as.POSIXct(Time_Order_picked, format = "%H:%M"),
+data <- data %>%
+  mutate(Time_Orderd = as.POSIXct(Time_Orderd),
+         Time_Order_picked = as.POSIXct(Time_Order_picked),
          Time = as.numeric(difftime(Time_Order_picked, Time_Orderd, units = "mins"))) %>%
   select(-Time_Orderd, -Time_Order_picked)
 
